@@ -32,14 +32,14 @@ public abstract class ServerPlayerEntityMixin extends Player implements PlayerEx
         super(world, pos, yaw, gameProfile, publicKey);
     }
 
-    @Inject(method = "openHandledScreen", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/network/ServerPlayerEntity;closeHandledScreen()V", shift = At.Shift.BEFORE), cancellable = true)
+    @Inject(method = "openMenu", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerPlayer;closeContainer()V", shift = At.Shift.BEFORE), cancellable = true)
     private void sgui_dontForceCloseFor(MenuProvider factory, CallbackInfoReturnable<OptionalInt> cir) {
         if (factory instanceof SguiScreenHandlerFactory<?> sguiScreenHandlerFactory && !sguiScreenHandlerFactory.gui().resetMousePosition()) {
             this.sgui_ignoreNext = true;
         }
     }
 
-    @Inject(method = "closeHandledScreen", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "closeContainer", at = @At("HEAD"), cancellable = true)
     private void sgui_ignoreClosing(CallbackInfo ci) {
         if (this.sgui_ignoreNext) {
             this.sgui_ignoreNext = false;
@@ -48,7 +48,7 @@ public abstract class ServerPlayerEntityMixin extends Player implements PlayerEx
         }
     }
 
-    @Inject(method = "onDeath", at = @At("TAIL"))
+    @Inject(method = "dieon", at = @At("TAIL"))
     private void sgui_onDeath(DamageSource source, CallbackInfo ci) {
         if (this.containerMenu instanceof VirtualScreenHandlerInterface handler) {
             handler.getGui().close(true);
