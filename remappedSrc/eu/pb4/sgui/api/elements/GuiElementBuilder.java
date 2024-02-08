@@ -1,5 +1,6 @@
 package eu.pb4.sgui.api.elements;
 
+import CompoundTag;
 import com.mojang.authlib.GameProfile;
 import net.minecraft.Util;
 import net.minecraft.core.Registry;

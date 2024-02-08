@@ -4,23 +4,22 @@ import eu.pb4.sgui.api.elements.GuiElement;
 import eu.pb4.sgui.api.elements.GuiElementBuilder;
 import eu.pb4.sgui.api.gui.layered.Layer;
 import eu.pb4.sgui.api.gui.layered.LayeredGui;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.Items;
-import net.minecraft.nbt.StringNbtReader;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 
 public class SnakeGui extends LayeredGui {
     static ItemStack create(String nbt) {
-        ItemStack stack = Items.GRAY_BANNER.getDefaultStack();
+        ItemStack stack = Items.GRAY_BANNER.getDefaultInstance();
         try {
-            stack.setNbt(StringNbtReader.parse(nbt));
-            stack.addHideFlag(ItemStack.TooltipSection.ADDITIONAL);
+            stack.setTag(TagParser.parseTag(nbt));
+            stack.hideTooltipPart(ItemStack.TooltipPart.ADDITIONAL);
         } catch (Exception e) {}
 
         return stack;
@@ -59,26 +58,26 @@ public class SnakeGui extends LayeredGui {
 
     Random random = new Random();
 
-    public SnakeGui(ServerPlayerEntity player) {
-        super(ScreenHandlerType.GENERIC_9X6, player, true);
-        this.setTitle(Text.literal("SGui Snake"));
+    public SnakeGui(ServerPlayer player) {
+        super(MenuType.GENERIC_9x6, player, true);
+        this.setTitle(Component.literal("SGui Snake"));
 
         Layer controller = new Layer(3, 3);
         this.controller = controller;
 
-        controller.setSlot(1, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Text.literal("^"))
+        controller.setSlot(1, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Component.literal("^"))
                 .setCallback((x, y, z) -> changeDirection(Direction.UP)));
 
-        controller.setSlot(3, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Text.literal("<"))
+        controller.setSlot(3, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Component.literal("<"))
                 .setCallback((x, y, z) -> changeDirection(Direction.LEFT)));
 
-        controller.setSlot(5, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Text.literal(">"))
+        controller.setSlot(5, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Component.literal(">"))
                 .setCallback((x, y, z) -> changeDirection(Direction.RIGHT)));
 
-        controller.setSlot(7, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Text.literal("v"))
+        controller.setSlot(7, new GuiElementBuilder(Items.MAGMA_CREAM).setName(Component.literal("v"))
                 .setCallback((x, y, z) -> changeDirection(Direction.DOWN)));
 
-        controller.setSlot(4, new GuiElementBuilder(Items.WHITE_STAINED_GLASS_PANE).setName(Text.empty()));
+        controller.setSlot(4, new GuiElementBuilder(Items.WHITE_STAINED_GLASS_PANE).setName(Component.empty()));
 
         this.addLayer(controller, 3, 6).setZIndex(5);
 
@@ -102,14 +101,14 @@ public class SnakeGui extends LayeredGui {
 
         Layer backdrop = new Layer(4 ,9);
 
-        GuiElementBuilder builder = new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(Text.empty());
+        GuiElementBuilder builder = new GuiElementBuilder(Items.GRAY_STAINED_GLASS_PANE).setName(Component.empty());
 
         while (backdrop.getFirstEmptySlot() != -1) {
             backdrop.addSlot(builder);
         }
 
-        backdrop.setSlot(backdrop.getSize() - 1, new GuiElementBuilder(Items.BARRIER).setName(Text.literal("Close")).setCallback((a, b, c, g) -> g.close()));
-        backdrop.setSlot(backdrop.getSize() - 9, new GuiElementBuilder(Items.EMERALD).setName(Text.literal("Restart")).setCallback((a, b, c, g) -> new SnakeGui(this.getPlayer()).open()));
+        backdrop.setSlot(backdrop.getSize() - 1, new GuiElementBuilder(Items.BARRIER).setName(Component.literal("Close")).setCallback((a, b, c, g) -> g.close()));
+        backdrop.setSlot(backdrop.getSize() - 9, new GuiElementBuilder(Items.EMERALD).setName(Component.literal("Restart")).setCallback((a, b, c, g) -> new SnakeGui(this.getPlayer()).open()));
         this.addLayer(backdrop, 0, 6);
     }
 
@@ -144,7 +143,7 @@ public class SnakeGui extends LayeredGui {
 
                 if (this.snakeParts.contains(this.snakeHead)) {
                     this.gameover = true;
-                    this.setTitle(Text.literal("Game Over!"));
+                    this.setTitle(Component.literal("Game Over!"));
                     return;
                 }
 
@@ -189,25 +188,25 @@ public class SnakeGui extends LayeredGui {
         this.gameplayLayer.clearSlots();
 
         for (Pos pos : this.apples) {
-            this.gameplayLayer.setSlot(pos.index(), Items.APPLE.getDefaultStack());
+            this.gameplayLayer.setSlot(pos.index(), Items.APPLE.getDefaultInstance());
         }
 
         for (Pos pos : this.goldApples) {
-            this.gameplayLayer.setSlot(pos.index(), Items.GOLDEN_APPLE.getDefaultStack());
+            this.gameplayLayer.setSlot(pos.index(), Items.GOLDEN_APPLE.getDefaultInstance());
         }
 
-        ItemStack stack = this.gameover ? Items.GRAY_WOOL.getDefaultStack() : Items.GREEN_WOOL.getDefaultStack();
+        ItemStack stack = this.gameover ? Items.GRAY_WOOL.getDefaultInstance() : Items.GREEN_WOOL.getDefaultInstance();
         for (Pos pos : this.snakeParts) {
             this.gameplayLayer.setSlot(pos.index(), stack);
         }
 
-        this.gameplayLayer.setSlot(this.snakeHead.index(), this.gameover ? Items.SKELETON_SKULL.getDefaultStack() : Items.CREEPER_HEAD.getDefaultStack());
+        this.gameplayLayer.setSlot(this.snakeHead.index(), this.gameover ? Items.SKELETON_SKULL.getDefaultInstance() : Items.CREEPER_HEAD.getDefaultInstance());
 
-        var scoreText = Text.literal("" + this.points);
+        var scoreText = Component.literal("" + this.points);
         for (int x = 0; x < 5; x++) {
             int score = (this.points / (int) Math.pow(10, x)) % 10;
             ItemStack stack1 = NUMBERS[score].copy();
-            stack1.setCustomName(scoreText);
+            stack1.setHoverName(scoreText);
             this.scoreLayer.setSlot(4 - x, stack1);
         }
 

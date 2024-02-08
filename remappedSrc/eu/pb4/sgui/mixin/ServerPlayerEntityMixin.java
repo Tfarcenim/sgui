@@ -24,6 +24,7 @@ import net.minecraft.world.level.Level;
 
 @Mixin(ServerPlayer.class)
 public abstract class ServerPlayerEntityMixin extends Player implements PlayerExtensions {
+    @Shadow public abstract void closeScreenHandler();
 
     @Unique
     private boolean sgui_ignoreNext = false;
@@ -43,7 +44,7 @@ public abstract class ServerPlayerEntityMixin extends Player implements PlayerEx
     private void sgui_ignoreClosing(CallbackInfo ci) {
         if (this.sgui_ignoreNext) {
             this.sgui_ignoreNext = false;
-            this.closeContainer();
+            this.closeScreenHandler();
             ci.cancel();
         }
     }

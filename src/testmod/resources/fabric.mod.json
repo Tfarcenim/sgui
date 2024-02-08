@@ -18,7 +18,7 @@
   "environment": "*",
   "entrypoints": {
     "main": [
-      "eu.pb4.sgui.testmod.SGuiTest"
+      "test.testmod.SGuiTest"
     ]
   }
 }
