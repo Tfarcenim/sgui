@@ -296,7 +296,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "method_44900", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "method_44900(Lnet/minecraft/network/protocol/game/ServerboundChatPacket;)V", at = @At("HEAD"), cancellable = true)
     private void sgui_onMessage(ServerboundChatPacket chatMessageC2SPacket, CallbackInfo ci) {
         if (this.player.containerMenu instanceof BookScreenHandler handler) {
             try {
@@ -309,7 +309,7 @@ public abstract class ServerPlayNetworkHandlerMixin {
         }
     }
 
-    @Inject(method = "method_44356", at = @At("HEAD"), cancellable = true)
+    @Inject(method = "method_44356(Lnet/minecraft/network/protocol/game/ServerboundChatCommandPacket;)V", at = @At("HEAD"), cancellable = true)
     private void sgui_onCommand(ServerboundChatCommandPacket packet, CallbackInfo ci) {
         if (this.player.containerMenu instanceof BookScreenHandler handler) {
             try {

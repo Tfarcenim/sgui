@@ -48,7 +48,7 @@ public abstract class ServerPlayerEntityMixin extends Player implements PlayerEx
         }
     }
 
-    @Inject(method = "dieon", at = @At("TAIL"))
+    @Inject(method = "die", at = @At("TAIL"))
     private void sgui_onDeath(DamageSource source, CallbackInfo ci) {
         if (this.containerMenu instanceof VirtualScreenHandlerInterface handler) {
             handler.getGui().close(true);
