@@ -1,13 +1,13 @@
 package eu.pb4.sgui.virtual.sign;
 
 import eu.pb4.sgui.mixin.SignBlockEntityAccessor;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.entity.SignBlockEntity;
-import net.minecraft.block.entity.SignText;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.entity.SignBlockEntity;
+import net.minecraft.world.level.block.entity.SignText;
+import net.minecraft.world.level.block.state.BlockState;
 
 /**
- * SignBlockEntity which doesn't invoke {@link SignBlockEntity#updateListeners()}
+ * SignBlockEntity which doesn't invoke {@link SignBlockEntity#markUpdated()}
  */
 public class VirtualSignBlockEntity extends SignBlockEntity {
 

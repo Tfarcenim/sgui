@@ -1,23 +1,23 @@
 package eu.pb4.sgui.virtual.merchant;
 
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.screen.slot.TradeOutputSlot;
-import net.minecraft.village.MerchantInventory;
-import net.minecraft.village.TradeOffer;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.MerchantContainer;
+import net.minecraft.world.inventory.MerchantResultSlot;
+import net.minecraft.world.item.trading.MerchantOffer;
 
-public class VirtualTradeOutputSlot extends TradeOutputSlot {
+public class VirtualTradeOutputSlot extends MerchantResultSlot {
 
-    private final MerchantInventory merchantInventory;
+    private final MerchantContainer merchantInventory;
 
-    public VirtualTradeOutputSlot(PlayerEntity player, VirtualMerchant merchant, MerchantInventory merchantInventory, int index, int x, int y) {
+    public VirtualTradeOutputSlot(Player player, VirtualMerchant merchant, MerchantContainer merchantInventory, int index, int x, int y) {
         super(player, merchant, merchantInventory, index, x, y);
         this.merchantInventory = merchantInventory;
     }
 
     @Override
-    public boolean canTakeItems(PlayerEntity playerEntity) {
-        TradeOffer tradeOffer = this.merchantInventory.getTradeOffer();
-        VirtualMerchantScreenHandler handler = (VirtualMerchantScreenHandler) playerEntity.currentScreenHandler;
+    public boolean mayPickup(Player playerEntity) {
+        MerchantOffer tradeOffer = this.merchantInventory.getActiveOffer();
+        VirtualMerchantScreenHandler handler = (VirtualMerchantScreenHandler) playerEntity.containerMenu;
         return tradeOffer != null && handler.getGui().onTrade(tradeOffer);
     }
 

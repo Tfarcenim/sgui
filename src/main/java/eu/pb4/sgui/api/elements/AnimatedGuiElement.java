@@ -1,9 +1,8 @@
 package eu.pb4.sgui.api.elements;
 
 import eu.pb4.sgui.api.gui.GuiInterface;
-import net.minecraft.item.ItemStack;
-
 import java.util.WeakHashMap;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Animated Gui Element
