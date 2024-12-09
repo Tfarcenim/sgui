@@ -2,10 +2,9 @@ package eu.pb4.sgui.api.gui.layered;
 
 import eu.pb4.sgui.api.SlotHolder;
 import eu.pb4.sgui.api.elements.GuiElementInterface;
-import net.minecraft.screen.slot.Slot;
-
 import java.util.HashSet;
 import java.util.Set;
+import net.minecraft.world.inventory.Slot;
 
 /**
  * This is implementation of layer, which can be used with {@link LayeredGui}

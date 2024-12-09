@@ -1,16 +1,16 @@
 package eu.pb4.sgui.api.gui;
 
+import Z;
 import eu.pb4.sgui.api.ScreenProperty;
 import eu.pb4.sgui.api.elements.BookElementBuilder;
 import eu.pb4.sgui.virtual.SguiScreenHandlerFactory;
 import eu.pb4.sgui.virtual.book.BookScreenHandler;
-import net.minecraft.item.ItemStack;
-import net.minecraft.registry.tag.ItemTags;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-
 import java.util.OptionalInt;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.tags.ItemTags;
+import net.minecraft.world.inventory.MenuType;
+import net.minecraft.world.item.ItemStack;
 
 /**
  * Book Gui Implementation
@@ -23,7 +23,7 @@ import java.util.OptionalInt;
  */
 @SuppressWarnings("unused")
 public class BookGui implements GuiInterface {
-    protected final ServerPlayerEntity player;
+    protected final ServerPlayer player;
     protected ItemStack book;
     protected int page = 0;
     @Deprecated(forRemoval = true)
@@ -41,10 +41,10 @@ public class BookGui implements GuiInterface {
      * @param book   the book stack to display
      * @throws IllegalArgumentException if the provided item is not a book
      */
-    public BookGui(ServerPlayerEntity player, ItemStack book) {
+    public BookGui(ServerPlayer player, ItemStack book) {
         this.player = player;
 
-        if (!book.getItem().getRegistryEntry().isIn(ItemTags.LECTERN_BOOKS)) {
+        if (!book.getItem().builtInRegistryHolder().is(ItemTags.LECTERN_BOOKS)) {
             throw new IllegalArgumentException("Item must be a book");
         }
         this.book = book;
@@ -57,7 +57,7 @@ public class BookGui implements GuiInterface {
      * @param player the player to serve this gui to
      * @param book   the book builder to display
      */
-    public BookGui(ServerPlayerEntity player, BookElementBuilder book) {
+    public BookGui(ServerPlayer player, BookElementBuilder book) {
         this.player = player;
         this.book = book.asStack();
     }
@@ -97,10 +97,10 @@ public class BookGui implements GuiInterface {
     }
 
     @Override
-    public ScreenHandlerType<?> getType() { return ScreenHandlerType.LECTERN; }
+    public MenuType<?> getType() { return MenuType.LECTERN; }
 
     @Override
-    public ServerPlayerEntity getPlayer() {
+    public ServerPlayer getPlayer() {
         return this.player;
     }
 
@@ -111,13 +111,13 @@ public class BookGui implements GuiInterface {
 
     @Override
     public boolean isOpen() {
-        return this.screenHandler == this.player.currentScreenHandler;
+        return this.screenHandler == this.player.containerMenu;
     }
 
     @Override
     public boolean open() {
         var state = false;
-        if (!this.player.isDisconnected() && !this.isOpen()) {
+        if (!this.player.hasDisconnected() && !this.isOpen()) {
             this.beforeOpen();
             state = this.setupScreenHandler();
             this.afterOpen();
@@ -130,12 +130,12 @@ public class BookGui implements GuiInterface {
         this.open = true;
         this.onOpen();
         this.reOpen = true;
-        OptionalInt temp = this.player.openHandledScreen(new SguiScreenHandlerFactory<>(this, (syncId, inv, player) -> new BookScreenHandler(syncId, this, player)));
+        OptionalInt temp = this.player.openMenu(new SguiScreenHandlerFactory<>(this, (syncId, inv, player) -> new BookScreenHandler(syncId, this, player)));
         this.reOpen = false;
         if (temp.isPresent()) {
             this.syncId = temp.getAsInt();
-            if (this.player.currentScreenHandler instanceof BookScreenHandler) {
-                this.screenHandler = (BookScreenHandler) this.player.currentScreenHandler;
+            if (this.player.containerMenu instanceof BookScreenHandler) {
+                this.screenHandler = (BookScreenHandler) this.player.containerMenu;
                 this.sendProperty(ScreenProperty.SELECTED, this.page);
                 return true;
             }
@@ -144,7 +144,7 @@ public class BookGui implements GuiInterface {
     }
 
     /**
-     * Called when player executes command via {@link net.minecraft.text.ClickEvent.Action#RUN_COMMAND}
+     * Called when player executes command via {@link net.minecraft.network.chat.ClickEvent.Action#RUN_COMMAND}
      *
      * @param command input command
      * @return Returns false, for continuing execution or true, if you want to cancel it
@@ -160,8 +160,8 @@ public class BookGui implements GuiInterface {
             this.open = this.isOpen();
             this.reOpen = false;
 
-            if (!screenHandlerIsClosed && this.player.currentScreenHandler == this.screenHandler) {
-                this.player.closeHandledScreen();
+            if (!screenHandlerIsClosed && this.player.containerMenu == this.screenHandler) {
+                this.player.closeContainer();
             }
 
             this.onClose();
@@ -172,12 +172,12 @@ public class BookGui implements GuiInterface {
 
     @Deprecated
     @Override
-    public void setTitle(Text title) {
+    public void setTitle(Component title) {
     }
 
     @Deprecated
     @Override
-    public Text getTitle() {
+    public Component getTitle() {
         return null;
     }
 
