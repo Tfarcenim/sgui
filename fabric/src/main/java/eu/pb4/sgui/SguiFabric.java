@@ -2,7 +2,7 @@ package eu.pb4.sgui;
 
 import net.fabricmc.api.ModInitializer;
 
-public class ExampleMod implements ModInitializer {
+public class SguiFabric implements ModInitializer {
     
     @Override
     public void onInitialize() {
@@ -12,7 +12,6 @@ public class ExampleMod implements ModInitializer {
         // project.
 
         // Use Fabric to bootstrap the Common mod.
-        Sgui.LOG.info("Hello Fabric world!");
         Sgui.init();
     }
 }

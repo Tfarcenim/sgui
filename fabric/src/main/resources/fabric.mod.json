@@ -16,7 +16,7 @@
     "environment": "*",
     "entrypoints": {
         "main": [
-          "eu.pb4.sgui.ExampleMod"
+          "eu.pb4.sgui.SguiFabric"
         ]
     },
     "mixins": [

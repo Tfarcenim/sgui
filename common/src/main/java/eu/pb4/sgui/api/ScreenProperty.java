@@ -60,7 +60,7 @@ public enum ScreenProperty {
     /**
      * The enchantment id of the respective enchantment (set to -1 to hide).
      * <p>
-     * To get the id use {@link Registry#getId(Object)} for {@link BuiltInRegistries#ENCHANTMENT}.
+     * To get the id use {@link Registry#getId(Object)} for {@link }.
      */
     TOP_ENCHANTMENT_ID(4, MenuType.ENCHANTMENT),
     MIDDLE_ENCHANTMENT_ID(5, MenuType.ENCHANTMENT),
